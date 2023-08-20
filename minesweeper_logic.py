@@ -45,11 +45,11 @@ def reveal_neighbours(map, revealed, row, col):
                 reveal_neighbours(map, revealed, row + i, col + j)
     
 def reveal(map, revealed, row, col):
-    result = [[False if cell == '_' else True for cell in row] for row in revealed]
+    result = [[False if cell == '_' or cell == "f" else True for cell in row] for row in revealed]
     reveal_neighbours(map, result, row, col)
-    #All elements that are true in result should  become the corresponding number in revealed
+    #All elements that are true in result should  become the corresponding cell in revealed
     revealed = [
-        [map[i][j] if result[i][j] else revealed[i][j] for j in range(len(revealed[0]))]
+        [map[i][j] if result[i][j] and (revealed[i][j]!="f" or revealed[row][col]=="f") else revealed[i][j] for j in range(len(revealed[0]))]
         for i in range(len(revealed))
     ]
     return revealed
@@ -61,9 +61,7 @@ def place_flag(map, revealed, row, col):
 def check_win(map, revealed):
     for row in range(len(map)):
         for col in range(len(map[0])):
-            if map[row][col] == -1 and revealed[row][col] != "f":
-                return False
-            if map[row][col] != -1 and revealed[row][col] == False:
+            if map[row][col] != -1 and revealed[row][col] == "_":
                 return False
     #All mines have flags, and all cells that are not mines have been revealed
     return True 
